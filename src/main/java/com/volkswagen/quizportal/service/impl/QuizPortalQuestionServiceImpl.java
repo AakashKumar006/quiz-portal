@@ -3,6 +3,7 @@ package com.volkswagen.quizportal.service.impl;
 import com.volkswagen.quizportal.exception.TopicNotFound;
 import com.volkswagen.quizportal.model.QuizPortalQuestion;
 import com.volkswagen.quizportal.model.QuizPortalTopic;
+import com.volkswagen.quizportal.payload.QuizPortalAttemptRequestDTO;
 import com.volkswagen.quizportal.repository.QuizPortalQuestionRepository;
 import com.volkswagen.quizportal.repository.QuizPortalTopicRepository;
 import com.volkswagen.quizportal.service.IQuizPortalQuestionService;
@@ -49,5 +50,11 @@ public class QuizPortalQuestionServiceImpl implements IQuizPortalQuestionService
             finalList.add(listOfQuestion);
         }
         return finalList;
+    }
+
+    @Override
+    public List<QuizPortalQuestion> evaluatingAttemptedQuiz(QuizPortalAttemptRequestDTO[] AttemptedQuiz, Long topicId) {
+        List<QuizPortalQuestion> listOfQuestion = questionRepository.findQuestionWithCorrectOptionListBasedOnTopicId(topicId);
+        return listOfQuestion;
     }
 }

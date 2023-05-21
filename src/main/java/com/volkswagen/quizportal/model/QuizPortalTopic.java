@@ -1,4 +1,5 @@
 package com.volkswagen.quizportal.model;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.volkswagen.quizportal.payload.QuizPortalTopicRequestDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
@@ -8,7 +9,6 @@ import java.time.LocalDate;
 import java.util.Set;
 
 @Entity
-@Data
 @Getter
 @Setter
 @AllArgsConstructor
@@ -37,8 +37,15 @@ public class QuizPortalTopic {
     @Column(name = "max_marks")
     private Integer maxMarks;
 
+
     @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<QuizPortalQuestion> question;
+
+
+    @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Set<QuizPortalAttempt> attempts;
+
+
 
     @OneToOne
     @JoinColumn(name = "created_by")
