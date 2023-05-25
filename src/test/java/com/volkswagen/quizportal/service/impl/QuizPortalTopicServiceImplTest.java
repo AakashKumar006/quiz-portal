@@ -8,6 +8,7 @@ import com.volkswagen.quizportal.payload.QuizPortalTopicRequestDTO;
 import com.volkswagen.quizportal.payload.QuizPortalTopicResponseDTO;
 import com.volkswagen.quizportal.repository.QuizPortalTopicRepository;
 import com.volkswagen.quizportal.repository.QuizPortalUserRepository;
+import com.volkswagen.quizportal.service.IQuizPortalTopicService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,16 +19,14 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
+
 
 import static org.mockito.BDDMockito.given;
 
 import java.time.LocalDate;
 import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
+
 import static org.mockito.Mockito.when;
 
 
@@ -40,6 +39,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 @AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
 class QuizPortalTopicServiceImplTest {
+
 
     @Mock
     private QuizPortalTopicRequestDTO requestDTO;
@@ -89,28 +89,15 @@ class QuizPortalTopicServiceImplTest {
                 1,
                 1);
 
-        /*responseDTO = new QuizPortalTopicResponseDTO(
-                1,
-                "Java",
-                "Testing",
-                5,
-                1,
-                5,
-                0,
-                quizPortalUser);*/
+
 
         quizPortalTopic = QuizPortalTopic.builder()
                 .topicId(1)
                 .topicName("Java")
                 .description("Testing")
-                .numberOfQuestion(5)
                 .marksPerQuestion(1)
-                .maxMarks(5)
                 .publish(0)
                 .build();
-
-
-
     }
 
     /**
@@ -152,14 +139,11 @@ class QuizPortalTopicServiceImplTest {
     @Test
     void GetListOfTopicCreatedBy_GivenCurrUser_WhenTopicCreatedByListEmpty_ThenThrowsException() {
         /*given(SecurityContextHolder.getContext().getAuthentication()).willReturn(Optional.of());*/
-
-
-
     }
 
     @Test
     void MaxMarksCalculation_GivenNoOfQuesAndMarksPerQues_WhenMultiplicationResultMatch_ThenTrueReturned() {
-        Integer result = topicService.maxMarksCalculation(1,2);
+        Integer result = IQuizPortalTopicService.maxMarksCalculation(1,2);
         assertEquals(2,result);
     }
 }

@@ -1,5 +1,7 @@
 package com.volkswagen.quizportal.controller;
 
+import com.volkswagen.quizportal.exception.EmptyList;
+import com.volkswagen.quizportal.exception.QuestionNotFound;
 import com.volkswagen.quizportal.exception.TopicNotFound;
 import com.volkswagen.quizportal.model.QuizPortalQuestion;
 import com.volkswagen.quizportal.service.impl.QuizPortalQuestionServiceImpl;
@@ -20,7 +22,7 @@ public class QuizPortalQuestionController {
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PostMapping("/addQuestion/{id}")
-    public  ResponseEntity<List<QuizPortalQuestion>> saveListOfQuestion(@PathVariable String id, @RequestBody QuizPortalQuestion[] question) {
+    public  ResponseEntity<List<QuizPortalQuestion>> saveListOfQuestion(@PathVariable String id, @RequestBody List<QuizPortalQuestion> question) {
         List<QuizPortalQuestion> response;
         try{
             response = questionService.saveListOfQuestion(question,Integer.parseInt(id));
@@ -31,14 +33,35 @@ public class QuizPortalQuestionController {
     }
 
     @GetMapping("/question/all/{topicId}")
-    public ResponseEntity<List<QuizPortalQuestion>> getListOfQuestionBasedOnTopicId(@PathVariable String topicId) {
+    public ResponseEntity<List<QuizPortalQuestion>> getListOfQuestionBasedOnTopicId(@PathVariable Integer topicId) {
         List<QuizPortalQuestion> response;
         try{
-            System.out.println("inside the question");
-            response = questionService.questionListBasedOnTopicId(Integer.parseInt(topicId));
-        }catch(TopicNotFound topicNotFound) {
+            response = questionService.questionListBasedOnTopicId(topicId);
+        }catch(EmptyList topicNotFound) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, topicNotFound.getMessage(), topicNotFound);
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @DeleteMapping("/questions/{id}")
+    public ResponseEntity<QuizPortalQuestion> deleteQuestion(@PathVariable("id") Integer questionId) {
+        QuizPortalQuestion response;
+        try {
+            response = questionService.deleteQuestion(questionId);
+        } catch (QuestionNotFound questionNotFound) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, questionNotFound.getMessage(), questionNotFound);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @PutMapping("/questions/{id}")
+    public ResponseEntity<QuizPortalQuestion> updateQuestion(@PathVariable("id") Integer questionId, @RequestBody QuizPortalQuestion question) {
+        QuizPortalQuestion response;
+        try {
+            response = questionService.updateQuestion(questionId, question);
+        } catch (QuestionNotFound questionNotFound) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, questionNotFound.getMessage(), questionNotFound);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }

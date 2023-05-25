@@ -3,7 +3,7 @@ package com.volkswagen.quizportal.payload;
 import java.util.List;
 
 public record QuizPortalAttemptRequestDTO(
-        String topicId,
+        Integer topicId,
         List<QuizPortalQuestAndAnswer> questCorrectOpt
 ) {
 }

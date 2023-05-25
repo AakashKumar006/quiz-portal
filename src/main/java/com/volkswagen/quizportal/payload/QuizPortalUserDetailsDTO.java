@@ -11,6 +11,7 @@ public record QuizPortalUserDetailsDTO(
         Integer userAge,
         LocalDate userDateOfBirth,
         String userPhoneNo,
-        String userRole
+        String userRole,
+        Integer isActive
 ) {
 }

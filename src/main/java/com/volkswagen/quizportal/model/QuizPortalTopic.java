@@ -1,9 +1,6 @@
 package com.volkswagen.quizportal.model;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.volkswagen.quizportal.payload.QuizPortalTopicRequestDTO;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 import java.time.LocalDate;
 import java.util.Set;
@@ -28,24 +25,14 @@ public class QuizPortalTopic {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "number_of_question")
-    private Integer numberOfQuestion;
-
     @Column(name = "marksPerQuestion")
     private Integer marksPerQuestion;
-
-    @Column(name = "max_marks")
-    private Integer maxMarks;
-
 
     @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<QuizPortalQuestion> question;
 
-
     @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<QuizPortalAttempt> attempts;
-
-
 
     @OneToOne
     @JoinColumn(name = "created_by")
@@ -57,16 +44,18 @@ public class QuizPortalTopic {
     /**
      * Initiating new quiz will contains zero questions,
      * And Publish flag will set on not-publish (0),
-     * To publish the quiz, number of questions added should
-     * equals to number of questions assigned during initiation.
+     * To publish the quiz, at least one question must
+     * be associated.
      */
     @Column(name = "publish")
     private Integer publish = 0; // 0 not-publish, 1 published
 
+    @Column(name = "published_On")
+    private LocalDate publishedOn;
+
     public QuizPortalTopic(QuizPortalTopicRequestDTO topicRequestDTO) {
         this.topicName = topicRequestDTO.topicName();
         this.description = topicRequestDTO.description();
-        this.numberOfQuestion = topicRequestDTO.numberOfQuestion();
         this.marksPerQuestion = topicRequestDTO.marksPerQuestion();
     }
 }

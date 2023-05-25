@@ -32,6 +32,7 @@ public class QuizPortalTopicController {
         }catch (UserNotExists userNotExists) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, userNotExists.getMessage());
         }
+        System.out.println(response);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -56,4 +57,17 @@ public class QuizPortalTopicController {
         }
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
+
+
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PutMapping("/quiz/publish/{id}")
+    public ResponseEntity<String> publishQuiz(@PathVariable("id") Integer topicId) {
+        try {
+            quizPortalTopicService.publishQuiz(topicId);
+        } catch (Exception ex) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+        }
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
 }

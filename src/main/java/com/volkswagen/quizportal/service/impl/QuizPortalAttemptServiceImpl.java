@@ -1,12 +1,14 @@
 package com.volkswagen.quizportal.service.impl;
 
 import com.volkswagen.quizportal.exception.EmptyList;
+import com.volkswagen.quizportal.exception.UserNotExists;
 import com.volkswagen.quizportal.model.QuizPortalAttempt;
 import com.volkswagen.quizportal.model.QuizPortalQuestion;
 import com.volkswagen.quizportal.model.QuizPortalTopic;
 import com.volkswagen.quizportal.model.QuizPortalUser;
 import com.volkswagen.quizportal.payload.QuizPortalAttemptRequestDTO;
 import com.volkswagen.quizportal.payload.QuizPortalAttemptResponseDTO;
+import com.volkswagen.quizportal.payload.QuizPortalAttemptResponseDTOMapper;
 import com.volkswagen.quizportal.payload.QuizPortalQuestAndAnswer;
 import com.volkswagen.quizportal.repository.QuizPortalAttemptRepository;
 import com.volkswagen.quizportal.repository.QuizPortalTopicRepository;
@@ -26,7 +28,7 @@ import java.util.stream.Collectors;
 @Service
 public class QuizPortalAttemptServiceImpl implements QuizPortalAttemptService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(QuizPortalTopicServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(QuizPortalAttemptServiceImpl.class);
 
     @Autowired
     private QuizPortalTopicRepository quizPortalTopicRepository;
@@ -37,16 +39,23 @@ public class QuizPortalAttemptServiceImpl implements QuizPortalAttemptService {
     @Autowired
     private QuizPortalAttemptRepository attemptRepository;
 
+    @Autowired
+    private QuizPortalAttemptResponseDTOMapper attemptResponseDTOMapper;
+
     @Override
-    public QuizPortalAttemptResponseDTO saveAttemptedQuiz(QuizPortalAttemptRequestDTO attemptRequestDTO) throws EmptyList {
+    public QuizPortalAttemptResponseDTO saveAttemptedQuiz(QuizPortalAttemptRequestDTO attemptRequestDTO) throws EmptyList, UserNotExists {
         Optional<QuizPortalUser> user = userRepository.findByUserEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-        Optional<QuizPortalTopic>  topic = quizPortalTopicRepository.findByTopicId(Integer.parseInt(attemptRequestDTO.topicId()));
+        if(user.isEmpty()) {
+            LOGGER.error("user not exists");
+            throw new UserNotExists("user not exists");
+        }
+        Optional<QuizPortalTopic>  topic = quizPortalTopicRepository.findByTopicId(attemptRequestDTO.topicId());
         if(topic.isEmpty()) {
             LOGGER.error("topic is not present with id"+attemptRequestDTO.topicId());
             throw new EmptyList("topic is not present with id"+attemptRequestDTO.topicId());
         }
         /**
-         * Creating the object of QuizPortalAttempt,
+         * Creating the object of QuizPortalAttempt entity,
          * setting the fields
          * saving into db
          * mapping to quizPortalAttemptResponseDTO and returning to client
@@ -54,8 +63,8 @@ public class QuizPortalAttemptServiceImpl implements QuizPortalAttemptService {
         Integer marks = calculateQuizMark(attemptRequestDTO.questCorrectOpt(),topic.get().getQuestion(), topic.get().getMarksPerQuestion());
         QuizPortalAttempt quizPortalAttempt = new QuizPortalAttempt(topic.get(),user.get(),marks);
         QuizPortalAttempt savedAttemptData = attemptRepository.save(quizPortalAttempt);
-        System.out.println(savedAttemptData);
-        return null;
+        LOGGER.info("Attempted Quiz saved for user id : "+user.get().getUserId());
+        return attemptResponseDTOMapper.apply(savedAttemptData);
     }
 
     @Override
@@ -71,5 +80,20 @@ public class QuizPortalAttemptServiceImpl implements QuizPortalAttemptService {
         return questAndAnswers.stream()
                 .filter( user -> quizPortalQuestion.stream().anyMatch(correct -> user.questionId().equals(correct.getQuestionId()) && user.selectedOption().equals(correct.getCorrectOption())))
                 .collect(Collectors.toList()).size()*marksPerQuestion;
+    }
+
+    @Override
+    public List<QuizPortalAttemptResponseDTO> getListOfAttemptsBasedOnUserId(Integer userId) throws UserNotExists, EmptyList {
+        Optional<QuizPortalUser> user = userRepository.findById(userId);
+        if(user.isEmpty()) {
+            LOGGER.error("user not exists");
+            throw new UserNotExists("user not exist");
+        }
+        Optional<List<QuizPortalAttempt>> listOfQuizAttempts = attemptRepository.findByAttemptedBy(user.get());
+        if(listOfQuizAttempts.isEmpty()) {
+            LOGGER.error("No quiz attempted by user id"+user.get().getUserId());
+            throw new EmptyList("No quiz attempted by user id"+user.get().getUserId());
+        }
+        return listOfQuizAttempts.get().stream().map(attemptResponseDTOMapper).collect(Collectors.toList());
     }
 }

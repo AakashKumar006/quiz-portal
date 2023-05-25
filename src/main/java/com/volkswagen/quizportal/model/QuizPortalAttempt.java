@@ -2,9 +2,7 @@ package com.volkswagen.quizportal.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.*;
-
 import java.time.LocalDate;
 
 @Entity
@@ -34,7 +32,7 @@ public class QuizPortalAttempt {
     private Integer marksObtained;
 
     @Column(name = "attempted_on")
-    private LocalDate attempted_on = LocalDate.now();
+    private LocalDate attemptedOn = LocalDate.now();
 
     public QuizPortalAttempt(QuizPortalTopic topic, QuizPortalUser attemptedBy, Integer marksObtained) {
         this.topic = topic;

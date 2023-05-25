@@ -7,5 +7,4 @@ import java.util.List;
 
 @Repository
 public interface QuizPortalUserRoleMapRepository extends JpaRepository<QuizPortalUserRoleMap, Integer> {
-    List<QuizPortalUserRoleMap> findByUsers(Integer userId);
 }

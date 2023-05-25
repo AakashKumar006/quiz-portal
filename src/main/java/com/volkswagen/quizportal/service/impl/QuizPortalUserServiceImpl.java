@@ -10,7 +10,10 @@ import com.volkswagen.quizportal.repository.QuizPortalRoleRepository;
 import com.volkswagen.quizportal.repository.QuizPortalUserRepository;
 import com.volkswagen.quizportal.service.QuizPortalUserService;
 import jakarta.servlet.http.HttpServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,18 +28,22 @@ import java.util.stream.Collectors;
 @Service
 public class QuizPortalUserServiceImpl implements QuizPortalUserService {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(QuizPortalUserServiceImpl.class);
+
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final QuizPortalUserRepository quizPortalUserRepository;
     private final QuizPortalRoleRepository quizPortalRoleRepository;
     private final QuizPortalRoleServiceImpl quizPortalRoleServiceImpl;
+    private final AuthenticationProvider authenticationProvider;
 
-    public QuizPortalUserServiceImpl(PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, QuizPortalUserRepository quizPortalUserRepository, QuizPortalRoleRepository quizPortalRoleRepository, QuizPortalRoleServiceImpl quizPortalRoleServiceImpl) {
+    public QuizPortalUserServiceImpl(PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, QuizPortalUserRepository quizPortalUserRepository, QuizPortalRoleRepository quizPortalRoleRepository, QuizPortalRoleServiceImpl quizPortalRoleServiceImpl, AuthenticationProvider authenticationProvider) {
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.quizPortalUserRepository = quizPortalUserRepository;
         this.quizPortalRoleRepository = quizPortalRoleRepository;
         this.quizPortalRoleServiceImpl = quizPortalRoleServiceImpl;
+        this.authenticationProvider = authenticationProvider;
     }
 
     @Override
@@ -87,6 +94,10 @@ public class QuizPortalUserServiceImpl implements QuizPortalUserService {
         Set<String> roles = authentication.getAuthorities().stream()
                 .map(r -> r.getAuthority()).collect(Collectors.toSet());
         System.out.println("*** : *** : "+roles);
+
+
+
+
 
 
         // Must be called from request filtered by Spring Security, otherwise SecurityContextHolder is not updated

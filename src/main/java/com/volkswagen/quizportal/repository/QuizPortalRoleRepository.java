@@ -10,6 +10,4 @@ import java.util.Optional;
 public interface QuizPortalRoleRepository extends JpaRepository<QuizPortalRole, Integer> {
 
     Optional<QuizPortalRole> findByRoleName(String roleName);
-
-    Optional<QuizPortalRole> findByRoleNameAndRoleActive(String role_user, Integer Isactive);
 }

@@ -21,12 +21,9 @@ public class QuizPortalQuestion {
     private Integer questionId;
 
     @JsonIgnore
-    @ManyToOne
+    @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "topic_id")
     private QuizPortalTopic topic;
-
-/*    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private Set<QuizPortalAnswer> answer;*/
 
     @Column(name = "option_A")
     private String optionA;
@@ -45,6 +42,4 @@ public class QuizPortalQuestion {
 
     @Column(name = "question")
     private String question;
-
-
 }

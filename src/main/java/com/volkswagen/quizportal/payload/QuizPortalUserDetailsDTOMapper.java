@@ -24,7 +24,8 @@ public class QuizPortalUserDetailsDTOMapper implements Function<QuizPortalUser, 
                 user.getUserAge(),
                 user.getUserDateOfBirth(),
                 user.getUserPhoneNo(),
-                roleName
+                roleName,
+                user.getIsActive()
         );
     }
 

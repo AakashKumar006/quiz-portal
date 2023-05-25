@@ -25,7 +25,7 @@ public class BasicAuthSecurityConfiguration {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/saveUser","/registration","/userLogin")
+                .requestMatchers("/saveUser","/registration","/userLogin","/v3/api-docs/**", "/swagger-ui/**")
                 .permitAll()
                 .requestMatchers(HttpMethod.OPTIONS).permitAll()
                 .and().authorizeHttpRequests().requestMatchers("/**")

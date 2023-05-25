@@ -7,9 +7,6 @@ import java.util.Optional;
 
 @Repository
 public interface QuizPortalUserRepository extends JpaRepository<QuizPortalUser, Integer> {
+
     Optional<QuizPortalUser> findByUserEmail(String userEmail);
-
-
-
-    Optional<QuizPortalUser> findByUserEmailAndUserPassword(String userEmail, String userPassword);
 }

@@ -61,4 +61,17 @@ public class CustomGlobalExceptionHandler {
         CustomErrorDetails errorDetails = new CustomErrorDetails(new Date(), exception.getMessage(),webRequest.getDescription(false), HttpStatus.BAD_REQUEST);
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(QuestionCountZero.class)
+    public ResponseEntity<CustomErrorDetails> handleEmptyListException(QuestionCountZero exception,WebRequest webRequest){
+        CustomErrorDetails errorDetails = new CustomErrorDetails(new Date(), exception.getMessage(),webRequest.getDescription(false), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(  QuestionNotFound.class)
+    public ResponseEntity<CustomErrorDetails> handleEmptyListException(  QuestionNotFound exception,WebRequest webRequest){
+        CustomErrorDetails errorDetails = new CustomErrorDetails(new Date(), exception.getMessage(),webRequest.getDescription(false), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+    }
+
 }

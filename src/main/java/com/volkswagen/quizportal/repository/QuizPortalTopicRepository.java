@@ -18,4 +18,6 @@ public interface QuizPortalTopicRepository extends JpaRepository<QuizPortalTopic
     List<QuizPortalTopic> findByPublish(Integer publishFlag);
 
 
+
+
 }
