@@ -88,26 +88,28 @@ public class QuizPortalUserServiceImpl implements QuizPortalUserService {
             System.out.println("invalid Password");
             throw new InvalidPassword("password is incorrect");
         }
+
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(quizPortalUserLoginDto.getUserEmail(),quizPortalUserLoginDto.getUserPassword());
+        authenticationManager.authenticate(token);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userName = authentication.getName();
-        System.out.println("userName : "+ userName);
-        Set<String> roles = authentication.getAuthorities().stream()
-                .map(r -> r.getAuthority()).collect(Collectors.toSet());
-        System.out.println("*** : *** : "+roles);
+
+
+        System.out.println("---- "+authentication.getPrincipal());
 
 
 
 
 
 
-        // Must be called from request filtered by Spring Security, otherwise SecurityContextHolder is not updated
+
+
+
 
 
 
         QuizPortalUser user = quizPortalUserRepository.findByUserEmail(quizPortalUserLoginDto.getUserEmail()).get();
         userLoginDetails.put("userName", user.getUserFirstName());
         userLoginDetails.put("userEmail",user.getUserEmail());
-        System.out.println("userId ::: "+user.getUserId());
         userLoginDetails.put("userId",user.getUserId().toString());
         for(QuizPortalUserRoleMap userRole: user.getUserRoleMap()) {
             userLoginDetails.put("userRole", userRole.getRoles().getRoleName());
