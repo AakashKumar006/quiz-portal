@@ -89,25 +89,11 @@ public class QuizPortalUserServiceImpl implements QuizPortalUserService {
             throw new InvalidPassword("password is incorrect");
         }
 
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(quizPortalUserLoginDto.getUserEmail(),quizPortalUserLoginDto.getUserPassword());
-        authenticationManager.authenticate(token);
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-
-        System.out.println("---- "+authentication.getPrincipal());
-
-
-
-
-
-
-
-
-
-
-
-
-        QuizPortalUser user = quizPortalUserRepository.findByUserEmail(quizPortalUserLoginDto.getUserEmail()).get();
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(quizPortalUserLoginDto.getUserEmail(), quizPortalUserLoginDto.getUserPassword());
+        Authentication authentication = authenticationManager.authenticate(token);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        QuizPortalUser user = (QuizPortalUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         userLoginDetails.put("userName", user.getUserFirstName());
         userLoginDetails.put("userEmail",user.getUserEmail());
         userLoginDetails.put("userId",user.getUserId().toString());

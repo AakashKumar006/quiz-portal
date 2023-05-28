@@ -31,6 +31,7 @@ public class QuizPortalUserController {
 
     @PostMapping("/registration")
     public ResponseEntity<Optional<QuizPortalUser>> userRegistration(@Valid @RequestBody QuizPortalUserRegistrationDTO quizPortalUserRegistrationDto) {
+        System.out.println("for registration");
         Optional<QuizPortalUser> quizPortalUser;
         try{
             quizPortalUser = quizPortalUserServiceImpl.quizPortalUserRegistration(quizPortalUserRegistrationDto);
@@ -44,13 +45,9 @@ public class QuizPortalUserController {
     public ResponseEntity<Map<String,String>> userLogin(@RequestBody QuizPortalUserLoginDTO quizPortalUserLoginDto) {
         Map<String,String> userResponse;
         try{
-            System.out.println("inside");
             userResponse = quizPortalUserServiceImpl.quizPortalUserLogin(quizPortalUserLoginDto);
-        } catch (EmailNotExists emailNotExists) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, emailNotExists.getMessage(), emailNotExists);
-        } catch (InvalidPassword invalidPassword) {
-
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, invalidPassword.getMessage(), invalidPassword);
+        } catch (Exception ex) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage(), ex);
         }
         return ResponseEntity.status(HttpStatus.OK).body(userResponse);
     }

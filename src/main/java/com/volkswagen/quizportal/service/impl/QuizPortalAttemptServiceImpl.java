@@ -44,11 +44,7 @@ public class QuizPortalAttemptServiceImpl implements QuizPortalAttemptService {
 
     @Override
     public QuizPortalAttemptResponseDTO saveAttemptedQuiz(QuizPortalAttemptRequestDTO attemptRequestDTO) throws EmptyList, UserNotExists {
-        Optional<QuizPortalUser> user = userRepository.findByUserEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-        if(user.isEmpty()) {
-            LOGGER.error("user not exists");
-            throw new UserNotExists("user not exists");
-        }
+        QuizPortalUser user = (QuizPortalUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Optional<QuizPortalTopic>  topic = quizPortalTopicRepository.findByTopicId(attemptRequestDTO.topicId());
         if(topic.isEmpty()) {
             LOGGER.error("topic is not present with id"+attemptRequestDTO.topicId());
@@ -61,9 +57,9 @@ public class QuizPortalAttemptServiceImpl implements QuizPortalAttemptService {
          * mapping to quizPortalAttemptResponseDTO and returning to client
          * */
         Integer marks = calculateQuizMark(attemptRequestDTO.questCorrectOpt(),topic.get().getQuestion(), topic.get().getMarksPerQuestion());
-        QuizPortalAttempt quizPortalAttempt = new QuizPortalAttempt(topic.get(),user.get(),marks);
+        QuizPortalAttempt quizPortalAttempt = new QuizPortalAttempt(topic.get(),user,marks);
         QuizPortalAttempt savedAttemptData = attemptRepository.save(quizPortalAttempt);
-        LOGGER.info("Attempted Quiz saved for user id : "+user.get().getUserId());
+        /*LOGGER.info("Attempted Quiz saved for user id : "+user.getUserId());*/
         return attemptResponseDTOMapper.apply(savedAttemptData);
     }
 

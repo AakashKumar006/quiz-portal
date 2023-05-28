@@ -20,6 +20,7 @@ public class UserInfoUserDetailsService extends QuizPortalUser implements UserDe
     private List<SimpleGrantedAuthority> authorityList;
 
     public UserInfoUserDetailsService(QuizPortalUser quizPortalUser) {
+        System.out.println("basic auth");
         this.userEmail = quizPortalUser.getUserEmail();
         this.password = quizPortalUser.getUserPassword();
         String role="";
@@ -28,6 +29,17 @@ public class UserInfoUserDetailsService extends QuizPortalUser implements UserDe
         }
         List<SimpleGrantedAuthority> authority = Collections.singletonList(new SimpleGrantedAuthority(role));
         this.authorityList = authority;
+        this.setUserId(quizPortalUser.getUserId());
+        this.setUserFirstName(quizPortalUser.getUserFirstName());
+        this.setUserLastName(quizPortalUser.getUserLastName());
+        this.setUserDateOfBirth(quizPortalUser.getUserDateOfBirth());
+        this.setUserAge(quizPortalUser.getUserAge());
+        this.setUserEmail(quizPortalUser.getUserEmail());
+        this.setUserPassword(quizPortalUser.getUserPassword());
+        this.setUserPhoneNo(quizPortalUser.getUserPhoneNo());
+        this.setIsActive(quizPortalUser.getIsActive());
+        this.setUserCreatedOn(quizPortalUser.getUserCreatedOn());
+        this.setUserRoleMap(quizPortalUser.getUserRoleMap());
     }
 
     @Override

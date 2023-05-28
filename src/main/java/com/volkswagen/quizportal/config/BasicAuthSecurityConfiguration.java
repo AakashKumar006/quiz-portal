@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,13 +26,11 @@ public class BasicAuthSecurityConfiguration {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/saveUser","/registration","/userLogin","/v3/api-docs/**", "/swagger-ui/**")
+                .requestMatchers("/registration","/userLogin","/swagger-ui/**", "/v3/api-docs/**")
                 .permitAll()
-                .requestMatchers(HttpMethod.OPTIONS).permitAll()
-                .and().authorizeHttpRequests().requestMatchers("/**")
-                .authenticated().and().formLogin()
-                .and().httpBasic()
-                .and().headers().frameOptions().sameOrigin();
+                .requestMatchers(HttpMethod.OPTIONS).permitAll().anyRequest()
+                .authenticated().and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and().httpBasic();
         return http.build();
     }
 
