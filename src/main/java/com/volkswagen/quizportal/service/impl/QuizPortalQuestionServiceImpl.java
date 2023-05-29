@@ -1,6 +1,7 @@
 package com.volkswagen.quizportal.service.impl;
 
 import com.volkswagen.quizportal.exception.EmptyList;
+import com.volkswagen.quizportal.exception.QuestionCountZero;
 import com.volkswagen.quizportal.exception.QuestionNotFound;
 import com.volkswagen.quizportal.exception.TopicNotFound;
 import com.volkswagen.quizportal.model.QuizPortalQuestion;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -50,14 +52,16 @@ public class QuizPortalQuestionServiceImpl implements IQuizPortalQuestionService
     }
 
     @Override
-    public List<QuizPortalQuestion> questionListBasedOnTopicId(Integer topicId) throws EmptyList {
-
-        Optional<List<QuizPortalQuestion>> listOfQuestions = questionRepository.findListOfQuestionBasedOnTopicId(topicId);
-        if(listOfQuestions.get().size() == 0) {
-            LOGGER.error("No Question Is Associated With Topic Id : "+topicId);
-            throw new EmptyList("No Question Is Associated With Topic Id : "+topicId);
+    public Set<QuizPortalQuestion> questionListBasedOnTopicId(Integer topicId) throws TopicNotFound, QuestionCountZero {
+        // new implementation
+        Optional<QuizPortalTopic> topic = topicRepository.findByTopicId(topicId);
+        if(topic.isEmpty()) {
+            throw new TopicNotFound("Topic Not Exists with id : "+topicId);
         }
-        return listOfQuestions.get();
+        if(topic.get().getQuestion().size() == 0) {
+            throw new QuestionCountZero("No Question Associate With Topic Id : "+topicId);
+        }
+        return topic.get().getQuestion();
     }
 
     @Override
@@ -67,7 +71,6 @@ public class QuizPortalQuestionServiceImpl implements IQuizPortalQuestionService
             LOGGER.error("Question Not Exist with the Id : "+questionId);
             throw new QuestionNotFound("Question Not Exist with the Id : "+questionId);
         }
-        /*Cascade DELETE would work if you were deleting the department and wanted all contacts to be deleted. In this case, though, we are just deleting a single contact, and not the entire department. Since the contact is in the department's contact collection, and that collection has SAVE/UPDATE cascading, hibernate complains that the item will be re-saved, which is the error that is given.*/
         questionRepository.delete(question.get());
         LOGGER.info("Question delete for Id : "+questionId);
         return question.get();

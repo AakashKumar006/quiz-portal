@@ -14,9 +14,9 @@ public interface QuizPortalAttemptService {
 
     QuizPortalAttemptResponseDTO saveAttemptedQuiz(QuizPortalAttemptRequestDTO attemptRequestDTO) throws EmptyList, UserNotExists;
 
-    int calculateQuizMark(List<QuizPortalQuestAndAnswer> questAndAnswers, Set<QuizPortalQuestion> quizPortalQuestions, Integer marksPerQuestion) throws EmptyList;
+    int calculateQuizMark(Set<QuizPortalQuestAndAnswer> questAndAnswers, Set<QuizPortalQuestion> quizPortalQuestions, Integer marksPerQuestion) throws EmptyList;
 
-    List<QuizPortalAttemptResponseDTO> getListOfAttemptsBasedOnUserId(Integer userId) throws UserNotExists, EmptyList;
+    List<QuizPortalAttemptResponseDTO> getListOfAttemptsBasedOnLoggedInUser() throws EmptyList;
 
     static int calculateMaxMarks(int numberOfQuestions, int marksPerQuestion) {
          return numberOfQuestions*marksPerQuestion;

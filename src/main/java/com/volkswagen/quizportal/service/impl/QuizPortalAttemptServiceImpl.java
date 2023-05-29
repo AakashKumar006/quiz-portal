@@ -64,7 +64,7 @@ public class QuizPortalAttemptServiceImpl implements QuizPortalAttemptService {
     }
 
     @Override
-    public int calculateQuizMark(List<QuizPortalQuestAndAnswer> questAndAnswers, Set<QuizPortalQuestion> quizPortalQuestion, Integer marksPerQuestion) throws EmptyList {
+    public int calculateQuizMark(Set<QuizPortalQuestAndAnswer> questAndAnswers, Set<QuizPortalQuestion> quizPortalQuestion, Integer marksPerQuestion) throws EmptyList {
         if(questAndAnswers.isEmpty()) {
             LOGGER.error("question and answer list is empty");
             throw new EmptyList("question and answer list is empty");
@@ -79,16 +79,11 @@ public class QuizPortalAttemptServiceImpl implements QuizPortalAttemptService {
     }
 
     @Override
-    public List<QuizPortalAttemptResponseDTO> getListOfAttemptsBasedOnUserId(Integer userId) throws UserNotExists, EmptyList {
-        Optional<QuizPortalUser> user = userRepository.findById(userId);
-        if(user.isEmpty()) {
-            LOGGER.error("user not exists");
-            throw new UserNotExists("user not exist");
-        }
-        Optional<List<QuizPortalAttempt>> listOfQuizAttempts = attemptRepository.findByAttemptedBy(user.get());
+    public List<QuizPortalAttemptResponseDTO> getListOfAttemptsBasedOnLoggedInUser() throws EmptyList {
+        Optional<List<QuizPortalAttempt>> listOfQuizAttempts = attemptRepository.findByAttemptedBy((QuizPortalUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         if(listOfQuizAttempts.isEmpty()) {
-            LOGGER.error("No quiz attempted by user id"+user.get().getUserId());
-            throw new EmptyList("No quiz attempted by user id"+user.get().getUserId());
+            LOGGER.error("No quiz attempted by user Logged In User");
+            throw new EmptyList("No quiz attempted by user Logged In User");
         }
         return listOfQuizAttempts.get().stream().map(attemptResponseDTOMapper).collect(Collectors.toList());
     }

@@ -1,6 +1,7 @@
 package com.volkswagen.quizportal.controller;
 
 import com.volkswagen.quizportal.exception.EmptyList;
+import com.volkswagen.quizportal.exception.QuestionCountZero;
 import com.volkswagen.quizportal.exception.QuestionNotFound;
 import com.volkswagen.quizportal.exception.TopicNotFound;
 import com.volkswagen.quizportal.model.QuizPortalQuestion;
@@ -12,33 +13,37 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @CrossOrigin(origins = "*")
+@RequestMapping("/api/v1")
 public class QuizPortalQuestionController {
 
     @Autowired
     private QuizPortalQuestionServiceImpl questionService;
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    @PostMapping("/addQuestion/{id}")
-    public  ResponseEntity<List<QuizPortalQuestion>> saveListOfQuestion(@PathVariable String id, @RequestBody List<QuizPortalQuestion> question) {
+    @PostMapping("/questions/topic/{topicId}")
+    public  ResponseEntity<List<QuizPortalQuestion>> saveListOfQuestion(@PathVariable Integer topicId, @RequestBody List<QuizPortalQuestion> listOfQuestion) {
         List<QuizPortalQuestion> response;
         try{
-            response = questionService.saveListOfQuestion(question,Integer.parseInt(id));
+            response = questionService.saveListOfQuestion(listOfQuestion,topicId);
         }catch (TopicNotFound topicNotFound) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, topicNotFound.getMessage(), topicNotFound);
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @GetMapping("/question/all/{topicId}")
-    public ResponseEntity<List<QuizPortalQuestion>> getListOfQuestionBasedOnTopicId(@PathVariable Integer topicId) {
-        List<QuizPortalQuestion> response;
+    @GetMapping("/questions/topic/{topicId}")
+    public ResponseEntity<Set<QuizPortalQuestion>> getListOfQuestionBasedOnTopicId(@PathVariable Integer topicId) {
+        Set<QuizPortalQuestion> response;
         try{
             response = questionService.questionListBasedOnTopicId(topicId);
-        }catch(EmptyList topicNotFound) {
+        } catch (TopicNotFound topicNotFound) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, topicNotFound.getMessage(), topicNotFound);
+        } catch (QuestionCountZero questionCountZero) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, questionCountZero.getMessage(), questionCountZero);
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }

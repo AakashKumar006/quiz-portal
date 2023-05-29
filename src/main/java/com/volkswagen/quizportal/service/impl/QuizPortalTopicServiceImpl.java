@@ -50,9 +50,9 @@ public class QuizPortalTopicServiceImpl implements IQuizPortalTopicService {
         QuizPortalTopic topicDetails = new QuizPortalTopic(topicRequestDTO);
         //  setting derived field, before persisting to DB
         topicDetails.setCreatedBy(topicCreatedBy.get());
-        topicRepository.save(topicDetails);
+        QuizPortalTopic topic = topicRepository.save(topicDetails);
         LOGGER.info("Topic details saved");
-        return quizPortalTopicDTOMapper.apply(topicDetails);
+        return quizPortalTopicDTOMapper.apply(topic);
     }
 
     @Override

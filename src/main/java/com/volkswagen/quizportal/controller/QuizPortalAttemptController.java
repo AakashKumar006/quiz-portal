@@ -1,7 +1,7 @@
 package com.volkswagen.quizportal.controller;
 
 import com.volkswagen.quizportal.exception.EmptyList;
-import com.volkswagen.quizportal.exception.TopicNotFound;
+
 import com.volkswagen.quizportal.exception.UserNotExists;
 import com.volkswagen.quizportal.payload.QuizPortalAttemptRequestDTO;
 import com.volkswagen.quizportal.payload.QuizPortalAttemptResponseDTO;
@@ -37,19 +37,12 @@ public class QuizPortalAttemptController {
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
 
-    @GetMapping("/attempts")
-    public void getListOfAllAttempts() {
-        return;
-    }
-
-    @GetMapping("/attempts/user/{id}")
-    public ResponseEntity<List<QuizPortalAttemptResponseDTO>> getListOfAttemptsBasedOnUser(@PathVariable("id") Integer userId) {
+    @GetMapping("/attempts/currUser")
+    public ResponseEntity<List<QuizPortalAttemptResponseDTO>> getListOfAttemptsBasedOnLoggedInUser() {
         List<QuizPortalAttemptResponseDTO> responseDTO;
         try {
-            responseDTO = quizPortalAttemptService.getListOfAttemptsBasedOnUserId(userId);
-        } catch (UserNotExists userNotExists) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, userNotExists.getMessage(), userNotExists);
-        }catch (EmptyList emptyList) {
+            responseDTO = quizPortalAttemptService.getListOfAttemptsBasedOnLoggedInUser();
+        } catch (EmptyList emptyList) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, emptyList.getMessage(), emptyList);
         }
         return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
