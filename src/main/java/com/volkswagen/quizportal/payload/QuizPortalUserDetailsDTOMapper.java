@@ -1,10 +1,8 @@
 package com.volkswagen.quizportal.payload;
 
-import com.volkswagen.quizportal.model.QuizPortalTopic;
 import com.volkswagen.quizportal.model.QuizPortalUser;
 import com.volkswagen.quizportal.model.QuizPortalUserRoleMap;
 import org.springframework.stereotype.Service;
-
 import java.util.function.Function;
 
 @Service
@@ -28,6 +26,4 @@ public class QuizPortalUserDetailsDTOMapper implements Function<QuizPortalUser, 
                 user.getIsActive()
         );
     }
-
-
 }

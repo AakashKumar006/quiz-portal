@@ -12,18 +12,15 @@ import com.volkswagen.quizportal.payload.QuizPortalAttemptResponseDTOMapper;
 import com.volkswagen.quizportal.payload.QuizPortalQuestAndAnswer;
 import com.volkswagen.quizportal.repository.QuizPortalAttemptRepository;
 import com.volkswagen.quizportal.repository.QuizPortalTopicRepository;
-import com.volkswagen.quizportal.repository.QuizPortalUserRepository;
 import com.volkswagen.quizportal.service.QuizPortalAttemptService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class QuizPortalAttemptServiceImpl implements QuizPortalAttemptService {
@@ -32,9 +29,6 @@ public class QuizPortalAttemptServiceImpl implements QuizPortalAttemptService {
 
     @Autowired
     private QuizPortalTopicRepository quizPortalTopicRepository;
-
-    @Autowired
-    private QuizPortalUserRepository userRepository;
 
     @Autowired
     private QuizPortalAttemptRepository attemptRepository;
@@ -47,7 +41,7 @@ public class QuizPortalAttemptServiceImpl implements QuizPortalAttemptService {
         QuizPortalUser user = (QuizPortalUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Optional<QuizPortalTopic>  topic = quizPortalTopicRepository.findByTopicId(attemptRequestDTO.topicId());
         if(topic.isEmpty()) {
-            LOGGER.error("topic is not present with id"+attemptRequestDTO.topicId());
+            LOGGER.error("topic is not present with id {}",attemptRequestDTO.topicId());
             throw new EmptyList("topic is not present with id"+attemptRequestDTO.topicId());
         }
         /**
@@ -59,7 +53,6 @@ public class QuizPortalAttemptServiceImpl implements QuizPortalAttemptService {
         Integer marks = calculateQuizMark(attemptRequestDTO.questCorrectOpt(),topic.get().getQuestion(), topic.get().getMarksPerQuestion());
         QuizPortalAttempt quizPortalAttempt = new QuizPortalAttempt(topic.get(),user,marks);
         QuizPortalAttempt savedAttemptData = attemptRepository.save(quizPortalAttempt);
-        /*LOGGER.info("Attempted Quiz saved for user id : "+user.getUserId());*/
         return attemptResponseDTOMapper.apply(savedAttemptData);
     }
 
@@ -75,16 +68,16 @@ public class QuizPortalAttemptServiceImpl implements QuizPortalAttemptService {
         }
         return questAndAnswers.stream()
                 .filter( user -> quizPortalQuestion.stream().anyMatch(correct -> user.questionId().equals(correct.getQuestionId()) && user.selectedOption().equals(correct.getCorrectOption())))
-                .collect(Collectors.toList()).size()*marksPerQuestion;
+                .toList().size()*marksPerQuestion;
     }
 
     @Override
     public List<QuizPortalAttemptResponseDTO> getListOfAttemptsBasedOnLoggedInUser() throws EmptyList {
         Optional<List<QuizPortalAttempt>> listOfQuizAttempts = attemptRepository.findByAttemptedBy((QuizPortalUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         if(listOfQuizAttempts.isEmpty()) {
-            LOGGER.error("No quiz attempted by user Logged In User");
-            throw new EmptyList("No quiz attempted by user Logged In User");
+            LOGGER.error("No quiz attempted by Logged In User");
+            throw new EmptyList("No quiz attempted by Logged In User");
         }
-        return listOfQuizAttempts.get().stream().map(attemptResponseDTOMapper).collect(Collectors.toList());
+        return listOfQuizAttempts.get().stream().map(attemptResponseDTOMapper).toList();
     }
 }

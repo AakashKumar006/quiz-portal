@@ -7,7 +7,6 @@ import com.volkswagen.quizportal.model.QuizPortalTopic;
 import com.volkswagen.quizportal.payload.QuizPortalTopicRequestDTO;
 import com.volkswagen.quizportal.payload.QuizPortalTopicResponseDTO;
 import com.volkswagen.quizportal.service.impl.QuizPortalTopicServiceImpl;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-
 import java.util.List;
 
 @RestController
@@ -26,7 +24,7 @@ public class QuizPortalTopicController {
     @Autowired
     private QuizPortalTopicServiceImpl quizPortalTopicService;
 
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/topic")
     public ResponseEntity<QuizPortalTopicResponseDTO> initiateQuiz(@Valid @RequestBody QuizPortalTopicRequestDTO quizPortalTopicRequestDTO) {
         QuizPortalTopicResponseDTO response;
@@ -50,7 +48,6 @@ public class QuizPortalTopicController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping("/topics")
     public ResponseEntity<List<QuizPortalTopicResponseDTO>> getListOfTopic(@RequestParam(value = "publish", required = false) Integer publishStatus) {
         List<QuizPortalTopicResponseDTO> response;

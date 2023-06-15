@@ -24,5 +24,5 @@ public interface IQuizPortalTopicService {
 
     static Integer maxMarksCalculation(Integer numberOfQuestion, Integer marksPerQuestion) {
         return numberOfQuestion*marksPerQuestion;
-    };
+    }
 }

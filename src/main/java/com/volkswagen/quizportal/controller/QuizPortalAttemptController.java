@@ -1,7 +1,6 @@
 package com.volkswagen.quizportal.controller;
 
 import com.volkswagen.quizportal.exception.EmptyList;
-
 import com.volkswagen.quizportal.exception.UserNotExists;
 import com.volkswagen.quizportal.payload.QuizPortalAttemptRequestDTO;
 import com.volkswagen.quizportal.payload.QuizPortalAttemptResponseDTO;
@@ -12,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-
 import java.util.List;
 
 @RestController
@@ -47,5 +45,4 @@ public class QuizPortalAttemptController {
         }
         return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
     }
-
 }

@@ -5,13 +5,9 @@ import com.volkswagen.quizportal.model.QuizPortalUserRoleMap;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
 
 public class UserInfoUserDetailsService extends QuizPortalUser implements UserDetails {
 
@@ -20,7 +16,6 @@ public class UserInfoUserDetailsService extends QuizPortalUser implements UserDe
     private List<SimpleGrantedAuthority> authorityList;
 
     public UserInfoUserDetailsService(QuizPortalUser quizPortalUser) {
-        System.out.println("basic auth");
         this.userEmail = quizPortalUser.getUserEmail();
         this.password = quizPortalUser.getUserPassword();
         String role="";

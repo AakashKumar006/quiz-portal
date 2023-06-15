@@ -1,19 +1,18 @@
 package com.volkswagen.quizportal.service;
 
+import com.volkswagen.quizportal.exception.EmailAlreadyExists;
 import com.volkswagen.quizportal.exception.EmailNotExists;
 import com.volkswagen.quizportal.exception.InvalidPassword;
 import com.volkswagen.quizportal.model.*;
 import com.volkswagen.quizportal.payload.QuizPortalUserLoginDTO;
 import com.volkswagen.quizportal.payload.QuizPortalUserRegistrationDTO;
-import jakarta.servlet.http.HttpServletRequest;
-
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.*;
 
 public interface QuizPortalUserService {
 
-    Optional<QuizPortalUser> quizPortalUserRegistration(QuizPortalUserRegistrationDTO quizPortalUserRegistrationRequest) throws Exception;
+    Optional<QuizPortalUser> quizPortalUserRegistration(QuizPortalUserRegistrationDTO quizPortalUserRegistrationRequest) throws EmailAlreadyExists;
 
     Map<String, String> quizPortalUserLogin(QuizPortalUserLoginDTO quizPortalUserLoginDto) throws EmailNotExists, InvalidPassword;
 
@@ -26,5 +25,5 @@ public interface QuizPortalUserService {
         } else {
             return 0;
         }
-    };
+    }
 }

@@ -5,7 +5,6 @@ import com.volkswagen.quizportal.exception.QuestionCountZero;
 import com.volkswagen.quizportal.exception.QuestionNotFound;
 import com.volkswagen.quizportal.exception.TopicNotFound;
 import com.volkswagen.quizportal.model.QuizPortalQuestion;
-import com.volkswagen.quizportal.payload.QuizPortalAttemptRequestDTO;
 
 import java.util.List;
 import java.util.Set;

@@ -21,9 +21,4 @@ public interface QuizPortalAttemptService {
     static int calculateMaxMarks(int numberOfQuestions, int marksPerQuestion) {
          return numberOfQuestions*marksPerQuestion;
     }
-
-
-
-
-
 }

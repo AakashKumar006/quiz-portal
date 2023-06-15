@@ -26,7 +26,7 @@ public class BasicAuthSecurityConfiguration {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/registration","/userLogin","/swagger-ui/**", "/v3/api-docs/**")
+                .requestMatchers("/registration", "/userLogin", "/swagger-ui/**", "/v3/api-docs/**")
                 .permitAll()
                 .requestMatchers(HttpMethod.OPTIONS).permitAll().anyRequest()
                 .authenticated().and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -34,7 +34,6 @@ public class BasicAuthSecurityConfiguration {
         return http.build();
     }
 
-    // authentication
     @Bean
     public UserDetailsService userDetailsService() {
         return new UserInfoUserDetailsServiceImpl();

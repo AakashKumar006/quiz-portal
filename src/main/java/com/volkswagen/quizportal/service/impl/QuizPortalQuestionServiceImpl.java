@@ -1,6 +1,5 @@
 package com.volkswagen.quizportal.service.impl;
 
-import com.volkswagen.quizportal.exception.EmptyList;
 import com.volkswagen.quizportal.exception.QuestionCountZero;
 import com.volkswagen.quizportal.exception.QuestionNotFound;
 import com.volkswagen.quizportal.exception.TopicNotFound;
@@ -17,12 +16,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class QuizPortalQuestionServiceImpl implements IQuizPortalQuestionService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(QuizPortalAttemptServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(QuizPortalQuestionServiceImpl.class);
 
     @Autowired
     private QuizPortalTopicRepository topicRepository;
@@ -34,31 +32,30 @@ public class QuizPortalQuestionServiceImpl implements IQuizPortalQuestionService
     public List<QuizPortalQuestion> saveListOfQuestion(List<QuizPortalQuestion> quizPortalQuestions, Integer topicId) throws TopicNotFound {
         Optional<QuizPortalTopic> topic = topicRepository.findById(topicId);
         if(topic.isEmpty()) {
-            LOGGER.error("Topic Not Found For Id : "+topicId);
+            LOGGER.error("Topic Not Found For Id : {}",topicId);
             throw new TopicNotFound("Topic Not Found");
         }
         /**
          *  initializing ArrayList for QuizPortalQuestion,
          *  adding topic object before setting topic for each question,
-         *  saving to DB by saveAll
+         *  saving all to DB
          * */
         List<QuizPortalQuestion> finalList = new ArrayList<>();
         quizPortalQuestions.stream().map(question -> {
             question.setTopic(topic.get());
             finalList.add(question);
             return finalList;
-        }).collect(Collectors.toList());
+        }).toList();
         return questionRepository.saveAll(finalList);
     }
 
     @Override
     public Set<QuizPortalQuestion> questionListBasedOnTopicId(Integer topicId) throws TopicNotFound, QuestionCountZero {
-        // new implementation
         Optional<QuizPortalTopic> topic = topicRepository.findByTopicId(topicId);
         if(topic.isEmpty()) {
-            throw new TopicNotFound("Topic Not Exists with id : "+topicId);
+            throw new TopicNotFound("Topic Not Exists with id : {}"+topicId);
         }
-        if(topic.get().getQuestion().size() == 0) {
+        if(topic.get().getQuestion().isEmpty()) {
             throw new QuestionCountZero("No Question Associate With Topic Id : "+topicId);
         }
         return topic.get().getQuestion();
@@ -68,11 +65,11 @@ public class QuizPortalQuestionServiceImpl implements IQuizPortalQuestionService
     public QuizPortalQuestion deleteQuestion(Integer questionId) throws QuestionNotFound {
         Optional<QuizPortalQuestion> question = questionRepository.findById(questionId);
         if(question.isEmpty()) {
-            LOGGER.error("Question Not Exist with the Id : "+questionId);
+            LOGGER.error("Question Not Exist with the Id : {}",questionId);
             throw new QuestionNotFound("Question Not Exist with the Id : "+questionId);
         }
         questionRepository.delete(question.get());
-        LOGGER.info("Question delete for Id : "+questionId);
+        LOGGER.info("Question delete for Id : {}",questionId);
         return question.get();
     }
 
@@ -80,9 +77,16 @@ public class QuizPortalQuestionServiceImpl implements IQuizPortalQuestionService
     public QuizPortalQuestion updateQuestion(Integer questionId, QuizPortalQuestion question) throws QuestionNotFound {
         Optional<QuizPortalQuestion> currentQuestion = questionRepository.findById(questionId);
         if(currentQuestion.isEmpty()) {
-            LOGGER.error("Question Not Exist with the Id : "+question.getQuestionId());
+            LOGGER.error("Question Not Exist with the Id : {}",question.getQuestionId());
             throw new QuestionNotFound("Question Not Exist with the Id : "+question.getQuestionId());
         }
-        return questionRepository.save(question);
+        System.out.println(question.getQuestion());
+        currentQuestion.get().setQuestion(question.getQuestion());
+        currentQuestion.get().setOptionA(question.getOptionA());
+        currentQuestion.get().setOptionB(question.getOptionB());
+        currentQuestion.get().setOptionC(question.getOptionC());
+        currentQuestion.get().setOptionD(question.getOptionD());
+        currentQuestion.get().setCorrectOption(question.getCorrectOption());
+        return questionRepository.save(currentQuestion.get());
     }
 }

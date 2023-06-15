@@ -8,7 +8,6 @@ import java.util.regex.Pattern;
 
 public class PasswordValidator implements ConstraintValidator<PasswordValid, String> {
 
-
     public boolean isValid(String password, ConstraintValidatorContext context) {
        String regex = "^(?=.*[0-9])" // represents a digit must occur at least once.
                + "(?=.*[a-z])" // represents a lower case alphabet must occur at least once.

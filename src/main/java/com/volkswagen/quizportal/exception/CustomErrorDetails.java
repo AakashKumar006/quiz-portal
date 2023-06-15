@@ -1,11 +1,9 @@
 package com.volkswagen.quizportal.exception;
 
 import org.springframework.http.HttpStatus;
-
 import java.util.Date;
 
 public class CustomErrorDetails {
-
     private Date timestamp;
     private String message;
     private String errorDetails;

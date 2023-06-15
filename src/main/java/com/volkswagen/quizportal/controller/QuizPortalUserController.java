@@ -1,13 +1,10 @@
 package com.volkswagen.quizportal.controller;
 
 import com.volkswagen.quizportal.exception.EmailAlreadyExists;
-import com.volkswagen.quizportal.exception.EmailNotExists;
-import com.volkswagen.quizportal.exception.InvalidPassword;
 import com.volkswagen.quizportal.model.*;
 import com.volkswagen.quizportal.payload.QuizPortalUserLoginDTO;
 import com.volkswagen.quizportal.payload.QuizPortalUserRegistrationDTO;
 import com.volkswagen.quizportal.service.impl.QuizPortalUserServiceImpl;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +12,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-
 import java.util.*;
 
 @RestController
@@ -31,7 +27,6 @@ public class QuizPortalUserController {
 
     @PostMapping("/registration")
     public ResponseEntity<Optional<QuizPortalUser>> userRegistration(@Valid @RequestBody QuizPortalUserRegistrationDTO quizPortalUserRegistrationDto) {
-        System.out.println("for registration");
         Optional<QuizPortalUser> quizPortalUser;
         try{
             quizPortalUser = quizPortalUserServiceImpl.quizPortalUserRegistration(quizPortalUserRegistrationDto);

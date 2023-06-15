@@ -15,13 +15,11 @@ import com.volkswagen.quizportal.service.IQuizPortalTopicService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class QuizPortalTopicServiceImpl implements IQuizPortalTopicService {
@@ -48,7 +46,6 @@ public class QuizPortalTopicServiceImpl implements IQuizPortalTopicService {
          *  converting TopicRequestDTO to TopicEntity and then saving to DB
         */
         QuizPortalTopic topicDetails = new QuizPortalTopic(topicRequestDTO);
-        //  setting derived field, before persisting to DB
         topicDetails.setCreatedBy(topicCreatedBy.get());
         QuizPortalTopic topic = topicRepository.save(topicDetails);
         LOGGER.info("Topic details saved");
@@ -63,7 +60,7 @@ public class QuizPortalTopicServiceImpl implements IQuizPortalTopicService {
             LOGGER.error("Topic List Is Empty For User");
             throw new EmptyList("Topic List Is Empty For User");
         }
-        return listOfTopicBasedOnCreatedBy.stream().map(quizPortalTopicDTOMapper).collect(Collectors.toList());
+        return listOfTopicBasedOnCreatedBy.stream().map(quizPortalTopicDTOMapper).toList();
     }
 
     @Override
@@ -79,7 +76,7 @@ public class QuizPortalTopicServiceImpl implements IQuizPortalTopicService {
                 throw new EmptyList("Published Topic List Is Empty");
             }
         }
-        return topicList.stream().map(quizPortalTopicDTOMapper).collect(Collectors.toList());
+        return topicList.stream().map(quizPortalTopicDTOMapper).toList();
     }
 
     @Override
@@ -88,7 +85,7 @@ public class QuizPortalTopicServiceImpl implements IQuizPortalTopicService {
         if(topics.isEmpty()) {
             throw new EmptyList("Topic List Is Empty");
         }
-        return topics.stream().map(quizPortalTopicDTOMapper).collect(Collectors.toList());
+        return topics.stream().map(quizPortalTopicDTOMapper).toList();
     }
 
     @Override
@@ -98,11 +95,11 @@ public class QuizPortalTopicServiceImpl implements IQuizPortalTopicService {
          */
         Optional<QuizPortalTopic> topic = topicRepository.findByTopicId(topicId);
         if(topic.isEmpty()) {
-            LOGGER.error("No topic exists with id : "+topicId);
+            LOGGER.error("No topic exists with id : {}",topicId);
             throw new EmptyList("Topic Is Not Present with id "+topicId);
         }
-        if(topic.get().getQuestion().size() == 0) {
-            LOGGER.error("No Question Is Associated With Topic Id : "+topicId);
+        if(topic.get().getQuestion().isEmpty()) {
+            LOGGER.error("No Question Is Associated With Topic Id : {}",topicId);
             throw new QuestionCountZero("No Question is Associated with topic id : "+topicId);
         }
         /**
@@ -111,7 +108,7 @@ public class QuizPortalTopicServiceImpl implements IQuizPortalTopicService {
         topic.get().setPublish(1);
         topic.get().setPublishedOn(LocalDate.now());
         topicRepository.save(topic.get());
-        LOGGER.info("Quiz Published for topic id: "+topicId);
+        LOGGER.info("Quiz Published for topic id: {}",topicId);
         return true;
     }
 
@@ -122,7 +119,7 @@ public class QuizPortalTopicServiceImpl implements IQuizPortalTopicService {
             throw new TopicNotFound("Topic Not Exist For Id : "+topicId);
         }
         topicRepository.delete(topic.get());
-        LOGGER.info("Topic Deleted For Id : "+topicId);
+        LOGGER.info("Topic Deleted For Id : {}",topicId);
         return topic.get();
     }
 
@@ -132,9 +129,11 @@ public class QuizPortalTopicServiceImpl implements IQuizPortalTopicService {
         if(currTopic.isEmpty()) {
             throw new TopicNotFound("Topic Not Exist For Id : "+topicId);
         }
-        topicRepository.save(topic);
-        LOGGER.info("Topic Update For Id : "+topicId);
+        currTopic.get().setTopicName(topic.getTopicName());
+        currTopic.get().setDescription(topic.getDescription());
+        currTopic.get().setMarksPerQuestion(topic.getMarksPerQuestion());
+        topicRepository.save(currTopic.get());
+        LOGGER.info("Topic Update For Id : {}",topicId);
         return topic;
     }
 }
-

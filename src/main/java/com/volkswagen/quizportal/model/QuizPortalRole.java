@@ -28,7 +28,6 @@ public class QuizPortalRole {
     @Column(name = "role_active")
     private Integer roleActive;
 
-   /* @JsonManagedReference(value = "role-map")*/
     @OneToMany(mappedBy = "roles", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<QuizPortalUserRoleMap> roleUserMap;
 

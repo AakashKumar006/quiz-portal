@@ -1,6 +1,5 @@
 package com.volkswagen.quizportal.controller;
 
-import com.volkswagen.quizportal.exception.EmptyList;
 import com.volkswagen.quizportal.exception.QuestionCountZero;
 import com.volkswagen.quizportal.exception.QuestionNotFound;
 import com.volkswagen.quizportal.exception.TopicNotFound;

@@ -3,7 +3,6 @@ package com.volkswagen.quizportal.payload;
 import com.volkswagen.quizportal.model.QuizPortalAttempt;
 import com.volkswagen.quizportal.service.QuizPortalAttemptService;
 import org.springframework.stereotype.Service;
-
 import java.util.function.Function;
 
 @Service
